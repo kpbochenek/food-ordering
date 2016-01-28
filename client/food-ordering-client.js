@@ -4,7 +4,7 @@ Template.order_guy.helpers({
     order_completed: function() {
         var orders = Orders.findOne({data: today});
         if (orders && orders.orders_size && orders.orders) {
-            var completed = orders.orders_size == orders.orders.length;
+            var completed = orders.orders_size == Object.keys(orders.orders).length;
             console.log("Is completed? " + completed);
             return completed;
         } else {
@@ -23,7 +23,11 @@ Template.orders_list.helpers({
     orders: function() {
         var orders = Orders.findOne({data: today})
         if (orders) {
-            return orders.orders;
+            var result = [];
+            Object.keys(orders.orders).forEach(function (k) {
+                result.push({'name': k, 'meal': orders.orders[k]});
+            });
+            return result;
         } else {
             return [];
         }
@@ -36,8 +40,8 @@ Template.orders_list.events({
 
         console.log(event.target.id);
         var orders = Orders.findOne({data: today});
-        var newOrders = orders.orders.filter(function (x) { return x.name != event.target.id });
-        Orders.update({_id: orders._id}, {$set: {orders: newOrders}});
+        delete orders.orders[event.target.id];
+        Orders.update({_id: orders._id}, {$set: {orders: orders.orders}});
     }
 });
 
@@ -51,9 +55,12 @@ Template.order_food.events({
 
         var order = Orders.findOne({data: today});
         if (order) {
-            Orders.update(order._id, {$push: {'orders': {name: name, meal: meal}}});
+            order.orders[name] = meal;
+            Orders.update(order._id, {$set: {'orders': order.orders}});
         } else {
-            Orders.insert({data: today, orders_size: 2, orders: [{name: name, meal: meal}]});
+            var o = {};
+            o[name] = meal;
+            Orders.insert({data: today, orders_size: 2, orders: o});
         }
         Meteor.call("checkCompleted");
     }
@@ -63,7 +70,7 @@ Template.order_food.helpers({
     orderDisabled: function() {
         var orders = Orders.findOne({data: today});
         if (orders && orders.orders_size && orders.orders) {
-            var completed = orders.orders_size == orders.orders.length;
+            var completed = orders.orders_size == Object.keys(orders.orders).length;
             return completed ? "disabled" : "";
         } else {
             return "";
@@ -89,7 +96,7 @@ Template.orders_size.helpers({
     ordersSizeDisabled: function() {
         var orders = Orders.findOne({data: today});
         if (orders && orders.orders_size && orders.orders) {
-            var completed = orders.orders_size == orders.orders.length;
+            var completed = orders.orders_size == Object.keys(orders.orders).length;
             return completed ? "disabled" : "";
         } else {
             return "";
