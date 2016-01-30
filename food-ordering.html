@@ -1,9 +1,44 @@
-<head>
-  <title>food-ordering</title>
-</head>
-
-<body>
+<template name="main">
   <h1>Order Food!</h1>
+
+  {{> yield}}
+
+  <hr/>
+  <p>Copyright &copy; Kris, 2014-2015.</p>
+</template>
+
+<template name="Groups">
+  {{> listGroups}}
+  {{> addGroup}}
+</template>
+
+
+<template name="listGroups">
+  <div class="panel panel-primary">
+  <div class="panel-heading">Istniejące grupy</div>
+  <ul>
+  {{#each groups}}
+    <li> <a href="/groups/{{name}}"> {{name}} </a> </li>
+  {{/each}}
+  </ul>
+  </div>
+</template>
+
+<template name="addGroup">
+  <div class="panel panel-info">
+  <div class="panel-heading">Stwórz nową grupę</div>
+  <form class="add-group form-inline" role="form">
+    <div class="form-group">
+      <input type="text" name="name" class="form-control" placeholder="Nowa grupa"/>
+    </div>
+    <button class="btn btn-primary">Stwórz!</button>
+  </form>
+  </div>
+</template>
+
+
+<template name="todayOrder">
+  <h4>Team: {{group}}</h4>
 
   {{> orders_size}}
 
@@ -12,20 +47,32 @@
   {{> orders_list}}
 
   {{> order_guy}}
-</body>
-
-
-<template name="order_guy">
-  {{#if order_completed}}
-  <div class="panel panel-primary">
-    <div class="panel-heading">Zamawiacz:</div>
-      <div class="panel-body">
-          {{order_caller}}
-      </div>
-    </div>
-  {{/if}}
 </template>
 
+<template name="orders_size">
+  <div class="panel">
+    Liczba osób w zamówieniu:
+    <select class="orderssize" {{ordersSizeDisabled}}>
+      {{#each selectors group}}
+        <option value="{{value}}" {{isSelected}}>{{value}}</option>
+      {{/each}}
+    </select>
+  </div>
+</template>
+
+<template name="order_food">
+  <div class="well">
+  <form class="submit-order form-inline" role="form">
+    <div class="form-group">
+      <input type="text" name="name" class="form-control" {{orderDisabled}} placeholder="Podaj swoje imie"/>
+    </div>
+    <div class="form-group">
+      <input type="text" name="meal" class="form-control" {{orderDisabled}} placeholder="Co chcesz zjeść"/>
+    </div>
+    <button class="btn btn-primary {{orderDisabled}}">Zamów!</button>
+  </form>
+  </div>
+</template>
 
 <template name="orders_list">
   <div class="panel panel-primary">
@@ -57,29 +104,13 @@
   </div>
 </template>
 
-
-<template name="order_food">
-  <div class="well">
-  <form class="submit-order form-inline" role="form">
-    <div class="form-group">
-      <input type="text" name="name" class="form-control" {{orderDisabled}} placeholder="Podaj swoje imie"/>
+<template name="order_guy">
+  {{#if order_completed}}
+  <div class="panel panel-primary">
+    <div class="panel-heading">Zamawiacz:</div>
+      <div class="panel-body">
+          {{order_caller}}
+      </div>
     </div>
-    <div class="form-group">
-      <input type="text" name="meal" class="form-control" {{orderDisabled}} placeholder="Co chcesz zjeść"/>
-    </div>
-    <button class="btn btn-primary {{orderDisabled}}">Zamów!</button>
-  </form>
-  </div>
-</template>
-
-
-<template name="orders_size">
-  <div class="panel">
-    Liczba osób w zamówieniu:
-    <select class="orderssize" {{ordersSizeDisabled}}>
-      {{#each selectors}}
-        <option value="{{value}}" {{isSelected}}>{{name}}</option>
-      {{/each}}
-    </select>
-  </div>
+  {{/if}}
 </template>
