@@ -12,7 +12,7 @@ Router.route('/', {
 });
 
 Router.route('/groups/:group', function () {
-    var group = this.params.group;
+    group = this.params.group;
     console.log("group: " + group);
     this.render('todayOrder', {data: {group: group}});
 });
@@ -126,7 +126,7 @@ if (Meteor.isClient) {
 
     Template.orders_list.helpers({
         orders: function() {
-            var orders = findTodayOrderForGroup(this.group)
+            var orders = findTodayOrderForGroup(this.group);
             if (orders) {
                 var result = [];
                 Object.keys(orders.orders).forEach(function (k) {
@@ -143,8 +143,9 @@ if (Meteor.isClient) {
         'submit .order-removed': function (event) {
             event.preventDefault();
 
-            console.log(event.target.id);
-            var orders = Orders.findOne({data: today});
+            console.log("DELETE " + event.target.id + " GG " + group);
+            var orders = findTodayOrderForGroup(group);
+            console.debug(orders);
             delete orders.orders[event.target.id];
             Orders.update({_id: orders._id}, {$set: {orders: orders.orders}});
         }
@@ -168,7 +169,7 @@ Meteor.methods({
         var today = currentDate();
         var orders = findTodayOrderForGroup(group);
         if (!orders) {
-            Orders.insert({data: today, group: group, orders_size: newValue, orders: {}})
+            Orders.insert({data: today, group: group, orders_size: newValue, orders: {}});
         } else {
             Orders.update({data: today, group: group}, {$set: {orders_size: newValue}});
         }
