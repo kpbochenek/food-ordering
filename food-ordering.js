@@ -112,7 +112,7 @@ if (Meteor.isClient) {
             } else {
                 var o = {};
                 o[name] = meal;
-                Orders.insert({data: today, group: this.group, orders_size: 2, orders: o});
+                Orders.insert({data: today, group: this.group, orders_size: "-", orders: o});
             }
             Meteor.call("tryComplete", this.group);
         }
