@@ -36,7 +36,6 @@
   </div>
 </template>
 
-
 <template name="todayOrder">
   <h4>Team: {{group}}</h4>
 
@@ -47,6 +46,8 @@
   {{> orders_list}}
 
   {{> order_guy}}
+
+  {{> history}}
 </template>
 
 <template name="orders_size">
@@ -57,17 +58,20 @@
         <option value="{{value}}" {{isSelected}}>{{value}}</option>
       {{/each}}
     </select>
+  <button type="button" class="btn btn-default refresh" aria-label="Refresh">
+  <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+  </button>
   </div>
 </template>
 
 <template name="order_food">
   <div class="well">
   <form class="submit-order form-inline" role="form">
-    <div class="form-group">
-      <input type="text" name="name" class="form-control" {{orderDisabled}} placeholder="Podaj swoje imie"/>
+    <div class="form-group form-group-lg">
+      <input type="text" name="name" class="form-control input-lg" {{orderDisabled}} placeholder="Podaj swoje imie"/>
     </div>
-    <div class="form-group">
-      <input type="text" name="meal" class="form-control" {{orderDisabled}} placeholder="Co chcesz zjeść"/>
+    <div class="form-group form-group-lg">
+      <input type="text" name="meal" class="form-control input-lg" {{orderDisabled}} placeholder="Co chcesz zjeść"/>
     </div>
     <button class="btn btn-primary {{orderDisabled}}">Zamów!</button>
   </form>
@@ -113,4 +117,27 @@
       </div>
     </div>
   {{/if}}
+</template>
+
+<template name="history">
+ <div class="panel-group" id="accordion">
+   {{#each orders}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{i}}">{{data}}</a>
+      </h4>
+    </div>
+    <div id="collapse{{i}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        <ul class="list-group">
+        {{#each ordersList}}
+          <li class="list-group-item">{{name}} --> {{value}}</li>
+        {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  </div>
 </template>

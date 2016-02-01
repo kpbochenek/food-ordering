@@ -95,6 +95,9 @@ if (Meteor.isClient) {
             console.log("change orders size: " + selectedValue);
             Meteor.call("setOrdersSize", this.group, selectedValue);
             Meteor.call("tryComplete", this.group);
+        },
+        'click .refresh': function(event) {
+            Meteor.call("setOrdersSize", this.group, "-");
         }
     });
 
@@ -162,6 +165,22 @@ if (Meteor.isClient) {
         }
     });
 
+    Template.history.helpers({
+        orders: function() {
+            var idx = 0;
+            return Orders.find({group: this.group}).map(function (o) {
+                idx = idx+1;
+                dt = o.data.split(":");
+                day = dt[0];
+                mth = month[dt[1]];
+                var textData = day + " of " + mth;
+                var listOrds = Object.keys(o.orders).map(function (ord) {
+                    return {name: ord, value: o.orders[ord]};
+                });
+                return {i: idx, data: textData, ordersList: listOrds };
+            });
+        }
+    });
 };
 
 Meteor.methods({
@@ -189,3 +208,20 @@ Meteor.methods({
         }
     }
 });
+
+
+var d = new Date();
+var month = new Array();
+month[0] = "January";
+month[1] = "February";
+month[2] = "March";
+month[3] = "April";
+month[4] = "May";
+month[5] = "June";
+month[6] = "July";
+month[7] = "August";
+month[8] = "September";
+month[9] = "October";
+month[10] = "November";
+month[11] = "December";
+// month[d.getMonth()];
